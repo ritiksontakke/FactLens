@@ -5,14 +5,13 @@ from pathlib import Path
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 # Locate the outer FactLens project directory
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
-# Load the .env file from the project root
 load_dotenv(PROJECT_ROOT / ".env", override=True)
 
-# Read database configuration
 USER = os.getenv("user")
 PASSWORD = os.getenv("password")
 HOST = os.getenv("host")
@@ -25,7 +24,6 @@ if not all([USER, PASSWORD, HOST, PORT, DBNAME]):
         "Check user, password, host, port, and dbname in .env."
     )
 
-# Build a safely escaped PostgreSQL connection URL
 DATABASE_URL = URL.create(
     drivername="postgresql+psycopg2",
     username=USER,
@@ -36,7 +34,22 @@ DATABASE_URL = URL.create(
     query={"sslmode": "require"},
 )
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+)
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+SessionLocal = sessionmaker(
+    bind=engine,
+    autoflush=False,
+    expire_on_commit=False,
+)
+
 
 def test_connection():
     try:
