@@ -4,3 +4,10 @@ dotenv
 langchain
 langchain-openai
 uvicorn
+
+sqlalchemy
+psycopg[binary]
+python-dotenv 
+sqlalchemy 
+psycopg2
+psycopg2-binary
