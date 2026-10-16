@@ -1,5 +1,6 @@
 from fastapi  import FastAPI
 
+from src.core.database import engine
 app = FastAPI(
     title="FactLens API",
     description="Evidence-based current information and fact verification.",
