@@ -3,3 +3,10 @@ uvicorn[standard]
 langchain
 langchain-openai
 pydantic
+sqlalchemy
+asyncpg
+alembic
+pydantic-settings
+python-dotenv
+psycopg2-binary
+python-multipart
