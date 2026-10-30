@@ -1,13 +1,20 @@
-from dotenv import load_dotenv
 from langchain.agents import create_agent
 
 from src.tools.tavilyTool import tavily_search_tool
+from src.state.agent_state import MyState
+from src.utils.models import get_model
+from langchain.tools import tool
 
-load_dotenv()
 
-research_agent = create_agent(
-    model="openai:gpt-5-nano",
+@tool("research_agent")
+def research_query(user_input: str):
+    """
+    You are a web research assistant.
+    """
+    research_agent = create_agent(
+    model=get_model(),
     tools=[tavily_search_tool],
+    state_schema=MyState,
     system_prompt=(
         "You are a web research assistant. "
         "Search the web, prioritize official and reliable sources, "
@@ -15,9 +22,8 @@ research_agent = create_agent(
         "Clearly state when information cannot be verified."
     ),
 )
+    
 
-
-def research_query(user_input: str) -> str:
     result = research_agent.invoke(
         {
             "messages": [
@@ -25,5 +31,4 @@ def research_query(user_input: str) -> str:
             ]
         }
     )
-
     return result["messages"][-1].content
